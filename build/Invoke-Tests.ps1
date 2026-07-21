@@ -15,7 +15,11 @@ $ErrorActionPreference = 'Stop'
 
 $repositoryRoot = Split-Path -Parent $PSScriptRoot
 $requirementsPath = Join-Path $PSScriptRoot 'requirements.psd1'
-$requirements = Import-PowerShellDataFile -Path $requirementsPath
+$requirements = $null
+Import-LocalizedData `
+    -BindingVariable requirements `
+    -BaseDirectory $PSScriptRoot `
+    -FileName (Split-Path -Leaf $requirementsPath)
 $localModulePath = Join-Path $repositoryRoot '.psmodules'
 $env:PSModulePath = "$localModulePath;$env:PSModulePath"
 
