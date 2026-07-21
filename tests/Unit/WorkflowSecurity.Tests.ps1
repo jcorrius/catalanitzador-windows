@@ -147,12 +147,14 @@ Describe 'GitHub Actions security policy' {
         $releaseWorkflow | Should -Match (
             'GH_REPO:\s*\$\{\{\s*github\.repository\s*\}\}'
         )
-        $releaseWorkflow | Should -Match 'immutable-releases'
         $releaseWorkflow | Should -Match (
-            '\$immutableReleasesEnabled -ne ''true'''
+            'releases/tags/\$env:RELEASE_TAG'
         )
         $releaseWorkflow | Should -Match (
-            'Immutable releases must be enabled before publication'
+            '\$publishedRelease\.immutable'
+        )
+        $releaseWorkflow | Should -Match (
+            'The published release is not immutable'
         )
         $releaseWorkflow | Should -Match 'dist/\*\.ps1'
         $releaseWorkflow | Should -Match (
