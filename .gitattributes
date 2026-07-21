@@ -1,0 +1,12 @@
+* text=auto
+
+*.ps1 text eol=crlf
+*.ps1.in text eol=crlf
+*.psd1 text eol=crlf
+*.psm1 text eol=crlf
+*.txt text eol=crlf
+LICENSE text eol=crlf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf

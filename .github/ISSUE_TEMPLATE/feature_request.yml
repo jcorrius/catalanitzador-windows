@@ -1,0 +1,26 @@
+name: Proposta
+description: Proposeu una millora compatible amb els objectius del projecte.
+title: "[Proposta]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema
+      description: Quin problema real resoldria el canvi?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Solució proposada
+    validations:
+      required: true
+  - type: textarea
+    id: microsoft
+    attributes:
+      label: Interfície documentada per Microsoft
+      description: Enllaceu la documentació oficial del mecanisme proposat.
+    validations:
+      required: true

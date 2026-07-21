@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "EditorConfig.EditorConfig",
+    "github.copilot",
+    "github.copilot-chat",
+    "github.vscode-github-actions",
+    "ms-vscode.powershell",
+    "redhat.vscode-yaml"
+  ]
+}

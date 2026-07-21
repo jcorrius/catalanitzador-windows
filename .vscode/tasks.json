@@ -1,0 +1,48 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Validate repository",
+      "type": "process",
+      "command": "${env:WINDIR}\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "args": [
+        "-NoLogo",
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "RemoteSigned",
+        "-File",
+        "${workspaceFolder}\\build\\Invoke-Tests.ps1"
+      ],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build release",
+      "type": "process",
+      "command": "${env:WINDIR}\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "args": [
+        "-NoLogo",
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "RemoteSigned",
+        "-File",
+        "${workspaceFolder}\\build\\Build-Release.ps1",
+        "-Version",
+        "${input:releaseVersion}"
+      ],
+      "group": "build",
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "releaseVersion",
+      "type": "promptString",
+      "description": "Semantic version without the v prefix",
+      "default": "0.1.0"
+    }
+  ]
+}

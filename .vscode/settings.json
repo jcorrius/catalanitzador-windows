@@ -1,0 +1,34 @@
+{
+  "editor.formatOnSave": true,
+  "editor.rulers": [
+    100
+  ],
+  "files.exclude": {
+    "**/.psmodules": true,
+    "**/TestResults": true,
+    "**/dist": true
+  },
+  "search.exclude": {
+    "**/.psmodules": true,
+    "**/TestResults": true,
+    "**/dist": true
+  },
+  "terminal.integrated.defaultProfile.windows": "Windows PowerShell",
+  "powershell.codeFormatting.preset": "OTBS",
+  "powershell.powerShellDefaultVersion": "Windows PowerShell",
+  "powershell.scriptAnalysis.enable": true,
+  "powershell.scriptAnalysis.settingsPath": "PSScriptAnalyzerSettings.psd1",
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[powershell]": {
+    "editor.defaultFormatter": "ms-vscode.powershell",
+    "files.encoding": "utf8bom"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  }
+}

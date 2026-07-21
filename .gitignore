@@ -1,0 +1,36 @@
+# Build and test output
+dist/
+TestResults/
+coverage/
+*.trx
+*.clixml
+*.log
+
+# Local tooling
+.idea/
+*.code-workspace
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/tasks.json
+.claude/settings.local.json
+.claude/worktrees/
+CLAUDE.local.md
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Secrets and signing material
+.env
+.env.*
+*.p12
+*.pfx
+*.pvk
+*.snk
+
+# PowerShell module caches
+Modules/
+.psmodules/

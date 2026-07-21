@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Preview Catalanitzador (-WhatIf)",
+      "type": "PowerShell",
+      "request": "launch",
+      "script": "${workspaceFolder}\\src\\Invoke-Catalanitzador.ps1",
+      "args": [
+        "-WhatIf",
+        "-Verbose"
+      ],
+      "createTemporaryIntegratedConsole": true
+    }
+  ]
+}

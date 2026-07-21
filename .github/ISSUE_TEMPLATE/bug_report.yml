@@ -1,0 +1,51 @@
+name: Error
+description: Informeu d'un comportament incorrecte o inesperat.
+title: "[Error]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        No inclogueu credencials, certificats ni registres amb dades personals.
+  - type: input
+    id: version
+    attributes:
+      label: Versió
+      description: Versió publicada o identificador del commit.
+    validations:
+      required: true
+  - type: dropdown
+    id: windows
+    attributes:
+      label: Versió de Windows
+      options:
+        - Windows 10 22H2
+        - Windows 11
+    validations:
+      required: true
+  - type: input
+    id: build
+    attributes:
+      label: Compilació i edició
+      placeholder: "19045, Professional"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Passos per reproduir-lo
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Resultat esperat
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Resultat obtingut
+    validations:
+      required: true

@@ -1,0 +1,107 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: PowerShell 5.1 on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-2022
+          - windows-2025
+
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
+      - name: Check out source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Install pinned validation modules
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $requirements = Import-PowerShellDataFile .\build\requirements.psd1
+          New-Item -ItemType Directory -Path .\.psmodules -Force | Out-Null
+          foreach ($name in @('Pester', 'PSScriptAnalyzer')) {
+              Save-PSResource `
+                  -Name $name `
+                  -Version $requirements[$name] `
+                  -Path .\.psmodules `
+                  -TrustRepository `
+                  -Quiet
+          }
+
+      - name: Parse with PowerShell 7
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $files = Get-ChildItem . -Recurse -File |
+              Where-Object {
+                  $_.Extension -in @('.ps1', '.psd1', '.psm1') -and
+                  $_.FullName -notmatch '[\\/]\.psmodules[\\/]'
+              }
+          foreach ($file in $files) {
+              $tokens = $null
+              $errors = $null
+              [Management.Automation.Language.Parser]::ParseFile(
+                  $file.FullName,
+                  [ref]$tokens,
+                  [ref]$errors
+              ) | Out-Null
+              if ($errors.Count -gt 0) {
+                  $errors | Format-List
+                  throw "Parser errors in $($file.FullName)."
+              }
+          }
+
+      - name: Run authoritative validation
+        shell: pwsh
+        run: |
+          $process = Start-Process `
+              -FilePath "$env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe" `
+              -ArgumentList @(
+                  '-NoLogo'
+                  '-NoProfile'
+                  '-ExecutionPolicy'
+                  'RemoteSigned'
+                  '-File'
+                  '.\build\Invoke-Tests.ps1'
+              ) `
+              -NoNewWindow `
+              -Wait `
+              -PassThru
+          if ($process.ExitCode -ne 0) {
+              throw "Windows PowerShell validation exited with $($process.ExitCode)."
+          }
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: test-results-${{ matrix.os }}
+          path: TestResults
+          if-no-files-found: warn
+          retention-days: 7
