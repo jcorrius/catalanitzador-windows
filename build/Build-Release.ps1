@@ -25,6 +25,38 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+function Get-CatalanitzadorFileSha256 {
+    [CmdletBinding()]
+    [OutputType([string])]
+    param(
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Path
+    )
+
+    $stream = $null
+    $algorithm = $null
+    try {
+        $stream = [IO.File]::Open(
+            $Path,
+            [IO.FileMode]::Open,
+            [IO.FileAccess]::Read,
+            [IO.FileShare]::Read
+        )
+        $algorithm = [Security.Cryptography.SHA256]::Create()
+        $hashBytes = $algorithm.ComputeHash($stream)
+        return [BitConverter]::ToString($hashBytes).Replace('-', '')
+    }
+    finally {
+        if ($null -ne $algorithm) {
+            $algorithm.Dispose()
+        }
+        if ($null -ne $stream) {
+            $stream.Dispose()
+        }
+    }
+}
+
 function Get-CatalanitzadorSigningCertificate {
     [CmdletBinding()]
     param(
@@ -346,7 +378,7 @@ New-CatalanitzadorStoredZip `
     -Entries $zipEntries `
     -Timestamp ([DateTimeOffset]::Parse('2000-01-01T00:00:00Z'))
 
-$archiveHash = (Get-FileHash -LiteralPath $archivePath -Algorithm SHA256).Hash
+$archiveHash = Get-CatalanitzadorFileSha256 -Path $archivePath
 $installerTemplatePath = Join-Path $repositoryRoot (
     'build\Install-Catalanitzador.ps1.in'
 )
@@ -389,9 +421,7 @@ if ($null -ne $signingCertificate) {
     }
 }
 
-$installerHash = (
-    Get-FileHash -LiteralPath $installerPath -Algorithm SHA256
-).Hash
+$installerHash = Get-CatalanitzadorFileSha256 -Path $installerPath
 $checksumLines = @(
     '{0}  {1}' -f $archiveHash, (Split-Path -Leaf $archivePath)
     '{0}  {1}' -f $installerHash, (Split-Path -Leaf $installerPath)

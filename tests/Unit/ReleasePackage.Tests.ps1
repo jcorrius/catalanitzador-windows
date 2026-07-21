@@ -5,6 +5,36 @@ BeforeAll {
     Add-Type -AssemblyName System.IO.Compression
     Add-Type -AssemblyName System.IO.Compression.FileSystem
 
+    function Get-TestFileSha256 {
+        param(
+            [Parameter(Mandatory)]
+            [string]$Path
+        )
+
+        $stream = $null
+        $algorithm = $null
+        try {
+            $stream = [IO.File]::Open(
+                $Path,
+                [IO.FileMode]::Open,
+                [IO.FileAccess]::Read,
+                [IO.FileShare]::Read
+            )
+            $algorithm = [Security.Cryptography.SHA256]::Create()
+            return [BitConverter]::ToString(
+                $algorithm.ComputeHash($stream)
+            ).Replace('-', '')
+        }
+        finally {
+            if ($null -ne $algorithm) {
+                $algorithm.Dispose()
+            }
+            if ($null -ne $stream) {
+                $stream.Dispose()
+            }
+        }
+    }
+
     $script:TestRepositoryRoot = Split-Path -Parent (
         Split-Path -Parent $PSScriptRoot
     )
@@ -96,17 +126,11 @@ Describe 'Release package' {
             Get-Content `
             -LiteralPath $script:TestReleaseOne.ChecksumPath `
         )
-        $actualHash = (
-            Get-FileHash `
-                -LiteralPath $script:TestReleaseOne.ArchivePath `
-                -Algorithm SHA256
-        ).Hash
+        $actualHash = Get-TestFileSha256 `
+            -Path $script:TestReleaseOne.ArchivePath
 
-        $actualInstallerHash = (
-            Get-FileHash `
-                -LiteralPath $script:TestReleaseOne.InstallerPath `
-                -Algorithm SHA256
-        ).Hash
+        $actualInstallerHash = Get-TestFileSha256 `
+            -Path $script:TestReleaseOne.InstallerPath
 
         $checksumLines | Should -Be @(
             (

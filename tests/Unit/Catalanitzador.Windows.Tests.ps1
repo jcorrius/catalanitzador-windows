@@ -11,6 +11,53 @@ Import-Module International -Force
 Describe 'Catalanitzador.Windows module' {
     InModuleScope Catalanitzador.Windows {
         BeforeAll {
+            if (-not (Get-Command Get-InstalledLanguage -ErrorAction SilentlyContinue)) {
+                function Get-InstalledLanguage {
+                    [CmdletBinding()]
+                    param()
+                }
+            }
+            if (-not (Get-Command Install-Language -ErrorAction SilentlyContinue)) {
+                function Install-Language {
+                    [CmdletBinding()]
+                    param(
+                        [string]$Language,
+                        [switch]$CopyToSettings
+                    )
+
+                    $null = $Language
+                    $null = $CopyToSettings
+                }
+            }
+            if (-not (Get-Command Get-SystemPreferredUILanguage -ErrorAction SilentlyContinue)) {
+                function Get-SystemPreferredUILanguage {
+                    [CmdletBinding()]
+                    param()
+                }
+            }
+            if (-not (Get-Command Set-SystemPreferredUILanguage -ErrorAction SilentlyContinue)) {
+                function Set-SystemPreferredUILanguage {
+                    [CmdletBinding()]
+                    param(
+                        [string]$Language
+                    )
+
+                    $null = $Language
+                }
+            }
+            if (-not (Get-Command Copy-UserInternationalSettingsToSystem -ErrorAction SilentlyContinue)) {
+                function Copy-UserInternationalSettingsToSystem {
+                    [CmdletBinding()]
+                    param(
+                        [bool]$WelcomeScreen,
+                        [bool]$NewUser
+                    )
+
+                    $null = $WelcomeScreen
+                    $null = $NewUser
+                }
+            }
+
             function New-TestLanguage {
                 param(
                     [Parameter(Mandatory)]
